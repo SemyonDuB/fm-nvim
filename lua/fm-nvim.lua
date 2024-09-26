@@ -51,6 +51,12 @@ local config = {
 }
 
 local method = config.edit_cmd
+
+local fm_nvim_path = "/tmp/fm-nvim"
+if vim.fn.has("win32") == 1 then
+    fm_nvim_path = vim.fn.getenv("TEMP") .. "/fm-nvim"
+end
+
 function M.setup(user_options)
     config = vim.tbl_deep_extend("force", config, user_options)
 end
@@ -75,7 +81,7 @@ local function on_exit()
     for _, func in ipairs(config.on_close) do
         func()
     end
-    checkFile("/tmp/fm-nvim")
+    checkFile(fm_nvim_path)
     checkFile(vim.fn.getenv("HOME") .. "/.cache/fff/opened_file")
     vim.cmd [[ checktime ]]
 end
@@ -238,9 +244,9 @@ end
 function M.Broot(dir)
     dir = dir or "."
     if config.ui.default == "float" then
-        createWin(config.cmds.broot_cmd .. " --conf " .. config.broot_conf .. " > /tmp/fm-nvim " .. dir, "<CR>")
+        createWin(config.cmds.broot_cmd .. " --conf " .. config.broot_conf .. " > " .. fm_nvim_path .. " " .. dir, "<CR>")
     elseif config.ui.default == "split" then
-        createSplit(config.cmds.broot_cmd .. " --conf " .. config.broot_conf .. " > /tmp/fm-nvim " .. dir, "<CR>")
+        createSplit(config.cmds.broot_cmd .. " --conf " .. config.broot_conf .. " > " .. fm_nvim_path .. " " .. dir, "<CR>")
     end
 end
 function M.Gitui(dir)
